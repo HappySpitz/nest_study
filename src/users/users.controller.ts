@@ -43,6 +43,7 @@ export class UsersController {
     return res.sendStatus(204);
   }
 
+  @ApiParam({ name: 'id', required: true })
   @Patch('/:id')
   async updateUser(
     @Req() req: any,
@@ -50,7 +51,9 @@ export class UsersController {
     @Res() res: any,
     @Param('id') id: string,
   ) {
-    return res.status(201).json(await this.userService.updateUser(id, body));
+    return res
+      .status(201)
+      .json(await this.userService.updateUser(id, body));
   }
 
   @Post('/animals/:id')
