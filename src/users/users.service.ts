@@ -4,36 +4,7 @@ import { CreatePetDto } from '../pets/dto/pets.dto';
 
 @Injectable()
 export class UsersService {
-  private users: any = [
-    {
-      id: '2023-04-13T12:41:28.644Z',
-      name: 'Arnold',
-      age: 23,
-      email: 'anna@gmail.com',
-      city: 'Kyiv',
-    },
-    {
-      id: '2023-04-13T12:43:48.974Z',
-      name: 'Anya',
-      age: 32,
-      email: 'anna@gmail.com',
-      city: 'Kyiv',
-    },
-    {
-      id: '2023-04-13T12:44:41.526Z',
-      name: 'Roman',
-      age: 3,
-      email: 'anna@gmail.com',
-      city: 'Kyiv',
-    },
-    {
-      id: '2023-04-13T12:44:09.799Z',
-      name: 'Leonid',
-      age: 27,
-      email: 'leonid@gmail.com',
-      city: 'Kyiv',
-    },
-  ];
+  private users: any = [];
   private pets: any = [];
 
   async getUsersList() {
@@ -74,7 +45,7 @@ export class UsersService {
 
   async addNewPet(id: string, petData: CreatePetDto) {
     const user = this.users.find(id);
-    // await user.update(this.pets: petData);
+    await user.update(pet: petData);
 
     return user;
   }
