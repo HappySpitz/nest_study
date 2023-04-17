@@ -24,10 +24,6 @@ export class CreatePetDto {
   age: number;
 
   @ApiProperty()
-  @IsString()
-  city: string;
-
-  @ApiProperty()
   @IsBoolean()
   @IsOptional()
   status: boolean;

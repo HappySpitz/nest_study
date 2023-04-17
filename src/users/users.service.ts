@@ -1,52 +1,55 @@
 import { Injectable, Req } from '@nestjs/common';
+import { User } from '@prisma/client';
+
 import { CreateUserDto, UpdateUserDto } from './dto/users.dto';
 import { CreatePetDto } from '../pets/dto/pets.dto';
+import { PrismaService } from '../core/orm/prisma.service';
 
 @Injectable()
 export class UsersService {
-  private users: any = [];
-  private pets: any = [];
+  constructor(private readonly prismaService: PrismaService) {}
 
-  async getUsersList() {
-    return this.users;
+  async getUsersList(): Promise<User[]> {
+    return this.prismaService.user.findMany();
   }
 
-  async createUser(userData: CreateUserDto) {
-    const { name, age, email, status, city } = userData;
-
-    const newUser = {
-      id: new Date(),
-      name,
-      age,
-      email,
-      status,
-      city,
-    };
-
-    await this.users.push(newUser);
-
-    return newUser;
+  async getUserById(userId: string) {
+    return this.prismaService.user.findFirst({
+      where: { id: Number(userId) },
+      select: {
+        name: true,
+        city: true,
+        age: true,
+      },
+    });
   }
 
-  async updateUser(id: string, userData: UpdateUserDto) {
-    const { name, age, email, status, city } = userData;
-
-    const user = this.users.find(id);
-    await user.update(name, age, email, status, city);
-
-    return user;
+  async createUser(userData: CreateUserDto): Promise<User> {
+    return this.prismaService.user.create({
+      data: {
+        name: userData.name,
+        city: userData.city,
+        email: userData.email,
+        age: userData.age,
+        status: userData.status,
+      },
+    });
   }
 
-  async deleteUser(id: string) {
-    const user = this.users.find(id);
-
-    await user.delete();
+  async updateById(userId: string, userData: UpdateUserDto) {
+    return this.prismaService.user.update({
+      where: { id: Number(userId) },
+      data: {
+        name: userData.name,
+        city: userData.city,
+        email: userData.email,
+        age: userData.age,
+        status: userData.status,
+      },
+    });
   }
 
-  async addNewPet(id: string, petData: CreatePetDto) {
-    const user = this.users.find(id);
-    await user.update(pet: petData);
-
-    return user;
+  async deleteById(userId: string) {
+    return this.prismaService.user.delete({ where: { id: Number(userId) } });
   }
 }

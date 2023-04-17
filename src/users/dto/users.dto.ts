@@ -1,6 +1,5 @@
 import {
   IsBoolean,
-  IsDate,
   IsEmail,
   IsNotEmpty,
   IsNumber,
@@ -8,7 +7,8 @@ import {
   IsString,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import {CreatePetDto} from "../../pets/dto/pets.dto";
+
+import { CreatePetDto } from '../../pets/dto/pets.dto';
 
 export class CreateUserDto {
   @ApiProperty()
@@ -39,7 +39,7 @@ export class CreateUserDto {
   @ApiProperty({ required: false })
   @IsNumber()
   @IsOptional()
-  pet: CreatePetDto;
+  pets: CreatePetDto[];
 }
 
 export class UpdateUserDto {
