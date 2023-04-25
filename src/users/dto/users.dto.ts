@@ -36,19 +36,20 @@ export class CreateUserDto {
   @IsOptional()
   status: boolean;
 
-  @ApiProperty({ required: false })
-  @IsNumber()
-  @IsOptional()
-  pets: CreatePetDto[];
+  @ApiProperty()
+  avatar: string;
+
+  @ApiProperty()
+  password: string;
 }
 
 export class UpdateUserDto {
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsNumber()
   @IsOptional()
   age: number;
@@ -59,12 +60,15 @@ export class UpdateUserDto {
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsString()
   city: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsBoolean()
   @IsOptional()
   status: boolean;
+
+  @ApiProperty()
+  password: string;
 }

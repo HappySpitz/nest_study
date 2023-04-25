@@ -1,8 +1,7 @@
-import { Injectable, Req } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 
 import { CreateUserDto, UpdateUserDto } from './dto/users.dto';
-import { CreatePetDto } from '../pets/dto/pets.dto';
 import { PrismaService } from '../core/orm/prisma.service';
 
 @Injectable()
@@ -17,9 +16,11 @@ export class UsersService {
     return this.prismaService.user.findFirst({
       where: { id: Number(userId) },
       select: {
+        id: true,
         name: true,
         city: true,
         age: true,
+        pets: true,
       },
     });
   }
@@ -32,6 +33,8 @@ export class UsersService {
         email: userData.email,
         age: userData.age,
         status: userData.status,
+        avatar: userData.avatar,
+        password: userData.password,
       },
     });
   }
@@ -51,5 +54,11 @@ export class UsersService {
 
   async deleteById(userId: string) {
     return this.prismaService.user.delete({ where: { id: Number(userId) } });
+  }
+
+  async findByUsername(userEmail: string) {
+    return this.prismaService.user.findFirst({
+      where: { email: userEmail },
+    });
   }
 }

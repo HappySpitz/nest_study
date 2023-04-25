@@ -27,4 +27,44 @@ export class CreatePetDto {
   @IsBoolean()
   @IsOptional()
   status: boolean;
+
+  @ApiProperty()
+  image: string;
+
+  @ApiProperty()
+  logo: string;
+
+  @ApiProperty()
+  ownerId: number;
+}
+
+export class CreatePetDtoSecond {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  animal: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @ApiProperty({ required: false })
+  @IsNumber()
+  @IsOptional()
+  age: number;
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  status: boolean;
+
+  @ApiProperty()
+  image: string;
+
+  @ApiProperty()
+  logo: string;
+
+  @ApiProperty()
+  ownerId: string;
 }

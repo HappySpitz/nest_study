@@ -2,35 +2,43 @@ import {
   Body,
   Controller,
   Delete,
+  forwardRef,
   Get,
   HttpStatus,
+  Inject,
   Param,
   Patch,
   Post,
   Req,
   Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
-// import { User } from '@prisma/client';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { diskStorage } from 'multer';
 
 import { CreateUserDto, UpdateUserDto } from './dto/users.dto';
 import { UsersService } from './users.service';
 import {
-  // ApiCreatedResponse,
-  ApiParam,
-  // ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+  editFileName,
+  imageFileFilter,
+} from 'src/core/file-upload/file.upload';
+import { PetsService } from '../pets/pets.service';
 import { CreatePetDto } from '../pets/dto/pets.dto';
-import { User } from '@prisma/client';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly userService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    @Inject(forwardRef(() => PetsService))
+    private readonly petsService: PetsService,
+  ) {}
 
   @Get()
-  async getUsersList(@Req() req: any, @Res() res: any): Promise<User[]> {
-    return res.status(HttpStatus.OK).json(await this.userService.getUsersList);
+  async getUsersList(@Req() req: any, @Res() res: any) {
+    return res.status(HttpStatus.OK).json(await this.usersService.getUsersList);
   }
 
   @ApiParam({ name: 'id', required: true })
@@ -38,7 +46,7 @@ export class UsersController {
   async getUserInfo(@Req() req: any, @Res() res: any, @Param('id') id: string) {
     return res
       .status(HttpStatus.OK)
-      .json(await this.userService.getUserById(id));
+      .json(await this.usersService.getUserById(id));
   }
 
   // @ApiCreatedResponse({
@@ -46,21 +54,35 @@ export class UsersController {
   //   type: User,
   // })
   @Post()
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './public',
+        filename: editFileName,
+      }),
+      fileFilter: imageFileFilter,
+    }),
+  )
   async createUser(
     @Req() req: any,
     @Body() body: CreateUserDto,
     @Res() res: any,
+    @UploadedFile() file: Express.Multer.File,
   ) {
+    if (file) {
+      body.avatar = `public/${file.filename}`;
+    }
+
     return res
       .status(HttpStatus.CREATED)
-      .json(await this.userService.createUser(body));
+      .json(await this.usersService.createUser(body));
   }
 
   @Delete('/:id')
   async deleteUser(@Req() req: any, @Res() res: any, @Param('id') id: string) {
     return res
       .status(HttpStatus.OK)
-      .json(await this.userService.deleteById(id));
+      .json(await this.usersService.deleteById(id));
   }
 
   @ApiParam({ name: 'id', required: true })
@@ -73,6 +95,26 @@ export class UsersController {
   ) {
     return res
       .status(HttpStatus.OK)
-      .json(await this.userService.updateById(id, body));
+      .json(await this.usersService.updateById(id, body));
+  }
+
+  @Post('/animals/:id')
+  async addNewPet(
+    @Req() req: any,
+    @Res() res: any,
+    @Body() body: CreatePetDto,
+    @Param('id') id: string,
+  ) {
+    const user = await this.usersService.getUserById(id);
+
+    if (!user) {
+      return res
+        .status(HttpStatus.NOT_FOUND)
+        .json(`User with id: ${id} not found`);
+    }
+
+    return res
+      .status(HttpStatus.OK)
+      .json(await this.petsService.createAnimal(body, id));
   }
 }
