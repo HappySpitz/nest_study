@@ -12,11 +12,13 @@ import {
   Req,
   Res,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
+import { AuthGuard } from '@nestjs/passport';
 
 import { CreateUserDto, UpdateUserDto } from './dto/users.dto';
 import { UsersService } from './users.service';
@@ -36,6 +38,7 @@ export class UsersController {
     private readonly petsService: PetsService,
   ) {}
 
+  @UseGuards(AuthGuard())
   @Get()
   async getUsersList(@Req() req: any, @Res() res: any) {
     return res.status(HttpStatus.OK).json(await this.usersService.getUsersList);
@@ -75,7 +78,7 @@ export class UsersController {
 
     return res
       .status(HttpStatus.CREATED)
-      .json(await this.usersService.createUser(body));
+      .json(await this.usersService.createUserByManager(body));
   }
 
   @Delete('/:id')

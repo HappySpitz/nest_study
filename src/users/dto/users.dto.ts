@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-import { CreatePetDto } from '../../pets/dto/pets.dto';
+import { IsValid } from '../decorators/check.days.decorator';
 
 export class CreateUserDto {
   @ApiProperty()
@@ -41,6 +41,13 @@ export class CreateUserDto {
 
   @ApiProperty()
   password: string;
+
+  //таблиця для персоналу
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  @IsValid()
+  dayOff: string;
 }
 
 export class UpdateUserDto {
