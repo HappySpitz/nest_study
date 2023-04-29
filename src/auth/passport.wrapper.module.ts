@@ -1,6 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import * as process from 'process';
 
 import { BearerStrategy } from './bearer.strategy';
 import { UsersService } from '../users/users.service';
@@ -12,17 +13,17 @@ import { AuthModule } from './auth.module';
   imports: [
     UsersModule,
     AuthModule,
-    PassportModule.register({ defaultStrategy: 'Bearer' }),
+    PassportModule.register({ defaultStrategy: 'bearer' }),
     JwtModule.registerAsync({
       useFactory: async () => ({
-        secret: 'Bearer',
+        secret: process.env.SECRET_KEY,
         signOptions: {
           expiresIn: '24h',
         },
       }),
     }),
   ],
-  providers: [BearerStrategy, UsersService],
+  providers: [BearerStrategy, UsersService, JwtService],
   exports: [PassportModule],
 })
 export class PassportWrapperModule {}

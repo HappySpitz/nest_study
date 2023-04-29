@@ -4,6 +4,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
+import { MailService } from '../core/mail/mail.service';
+import { MailTemplate } from '../core/mail/mail.interface';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -11,6 +13,7 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private readonly usersService: UsersService,
+    private readonly mailService: MailService,
   ) {}
 
   @Post('login')
@@ -62,8 +65,12 @@ export class AuthController {
     });
 
     if (user) {
+      const subject = 'Welcome on board!';
+      const to = 'tatarkristina4@gmail.com';
+      this.mailService.send(to, subject, MailTemplate.WELCOME, {
+        userName: user.name,
+      });
       const token = await this.authService.signIn(user.id.toString());
-
       return res.status(HttpStatus.OK).json({ token });
     }
 

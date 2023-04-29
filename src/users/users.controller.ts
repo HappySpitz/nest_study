@@ -31,6 +31,7 @@ import { CreatePetDto } from '../pets/dto/pets.dto';
 
 @ApiTags('Users')
 @Controller('users')
+@UseGuards(AuthGuard())
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
@@ -38,10 +39,11 @@ export class UsersController {
     private readonly petsService: PetsService,
   ) {}
 
-  @UseGuards(AuthGuard())
   @Get()
   async getUsersList(@Req() req: any, @Res() res: any) {
-    return res.status(HttpStatus.OK).json(await this.usersService.getUsersList);
+    return res
+      .status(HttpStatus.OK)
+      .json(await this.usersService.getUsersList());
   }
 
   @ApiParam({ name: 'id', required: true })

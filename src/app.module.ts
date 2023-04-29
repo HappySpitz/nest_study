@@ -13,19 +13,24 @@ import { PrismaService } from './core/orm/prisma.service';
 import { AuthModule } from './auth/auth.module';
 import { AuthController } from './auth/auth.controller';
 import { PassportWrapperModule } from './auth/passport.wrapper.module';
+import { BearerStrategy } from './auth/bearer.strategy';
+import { JwtModule } from '@nestjs/jwt';
+import { CoreModule } from './core/core.module';
 
 @Module({
+  controllers: [AppController, UsersController, AuthController],
   imports: [
     UsersModule,
     PetsModule,
     PrismaModule,
     AuthModule,
     PassportWrapperModule,
+    CoreModule,
+    JwtModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
   ],
-  controllers: [AppController, UsersController, AuthController],
-  providers: [AppService, UsersService, PrismaService],
+  providers: [AppService, UsersService, PrismaService, BearerStrategy],
 })
 export class AppModule {}
